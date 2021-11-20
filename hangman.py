@@ -9,7 +9,6 @@ import time
 def get_word():
     global word
     word = random.choice(word_list).upper()
-    print(word)
 
 # This is the game ending function
 def endgame():
