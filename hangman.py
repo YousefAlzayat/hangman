@@ -4,41 +4,38 @@ from stages import game_stages
 import time
 
 
-## This function calls a random word from the word dictionary
 
+# This function calls a random word from the word dictionary
 def get_word():
     global word
     word = random.choice(word_list).upper()
+    print(word)
 
-
-## This is the game ending function
-
+# This is the game ending function
 def endgame():
-    global guessed
-    guessed = True
-    print("That's right, you guessed the word,", word)
-    time.sleep(1)
-    print("Thank you for playing!")
-    time.sleep(1)
     print("This program will terminate in 5 seconds")
     time.sleep(5)
 
-
-## This is the main game function
-
+# This is the main game function
 def game(word):
 
-
-    guessed = False
+    guesses = 7
     guessed_letters = []
     guessed_words = []
-    letter_counter = 0
     remaining_letters = len(word)
-    guesses = 7
+    letter_counter = 0
 
+    # Main game loop
+    while True:
 
-    while guessed == False:
+        # To check if user has run out of guesses
+        if guesses == 0:
+            print("You lost the game, The word was", word)
+            time.sleep(1)
+            endgame()
+            break
 
+        # used to print the drawing of the hangman and the blank letters and guessed letters
         print(game_stages[guesses-1])
         game_blanks = ""
         for i in word:
@@ -49,46 +46,59 @@ def game(word):
         print(game_blanks)
         print("\n")
 
-
-
-
+        # Asks for the user's guess
         guess = input("Please guess a letter or a word: ").upper()
 
+        # Checking if the input string is inside the word
         if guess in word:
-            if len(guess) == 1:
-                for letter in word:
-                    if letter == guess:
-                        remaining_letters = remaining_letters - 1
-                if remaining_letters == 0:
-                    endgame()
-                    break
-                if remaining_letters > 0:
-                    print("That's right the letter", guess, "is in the word.")
-                    guessed_letters.append(guess)
 
+            # If the guess was a letter
+            if len(guess) == 1:
+
+                # Checks if the letter was already guessed
+                if guess in guessed_letters:
+                    print("You already guessed that letter, Try again.")
+
+                else:
+                    guessed_letters.append(guess)
+                    for letter in word:
+                        if letter == guess:
+                            remaining_letters = remaining_letters - 1
+
+                    # In case this was the last letter remaining
+                    if remaining_letters == 0:
+                        print("Congrats, You guessed the word:", word)
+                        time.sleep(1)
+                        endgame()
+                        break
+
+                    # In case the letter was correct but not the last one remaining
+                    if remaining_letters > 0:
+                        print("That's right the letter", guess, "is in the word.")
+
+            # In case it's the correct word
             elif len(guess) == len(word):
-                guessed_words.append(guess)
                 print("That's right,", guess, "is the word.")
-                guessed = True
                 time.sleep(1)
                 print("Thank you for playing!")
                 time.sleep(1)
-                print("This program will terminate in 5 seconds")
-                time.sleep(5)
+                endgame()
                 break
+
+            # If neither a letter nor a word of the same length print an error message
             else:
-                print("Please enter either a a letter or a word.")
+                print("Please enter either a letter or a word.")
 
-
-
+        # If not in the word
         else:
+
+            # If it was a letter and not in the word
             if len(guess) == 1:
-                if guess in guessed_letters:
-                    print("You already guessed that letter, Try again.")
-                else:
-                    guessed_letters.append(guess)
-                    print("The letter", guess, "is not in the word.")
-                    guesses -= 1
+                guessed_letters.append(guess)
+                print("The letter", guess, "is not in the word.")
+                guesses -= 1
+
+            # If it was a word with the same length and not the word
             elif len(guess) == len(word):
                 if guess in guessed_words:
                     print("You already guessed that word, Try again")
@@ -96,16 +106,11 @@ def game(word):
                     guessed_words.append(guess)
                     print(guess, "is not the word.")
                     guesses -= 1
+
+            # If it was neither a letter nor a word of the same length
             else:
                 print("Please enter either a letter or a word.")
 
 
-        if guesses == 0:
-            print("You lost the game, The word was", word)
-            time.sleep(1)
-            print("The program will terminate in 5 seconds")
-            time.sleep(5)
-            guessed = True
-            break
 get_word()
 game(word)
