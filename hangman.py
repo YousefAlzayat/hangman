@@ -23,7 +23,6 @@ def game(word):
     guessed_letters = []
     guessed_words = []
     remaining_letters = len(word)
-    letter_counter = 0
 
     # Main game loop
     while True:
@@ -44,7 +43,7 @@ def game(word):
             else:
                 game_blanks = game_blanks + "_"
         print(game_blanks)
-        print("\n")
+        print("\n" * 10)
 
         # Asks for the user's guess
         guess = input("Please guess a letter or a word: ").upper()
@@ -94,14 +93,17 @@ def game(word):
 
             # If it was a letter and not in the word
             if len(guess) == 1:
-                guessed_letters.append(guess)
-                print("The letter", guess, "is not in the word.")
-                guesses -= 1
+                if guess in guessed_letters:
+                    print("You already guessed that letter, Try again.")
+                else:
+                    guessed_letters.append(guess)
+                    print("The letter", guess, "is not in the word.")
+                    guesses -= 1
 
             # If it was a word with the same length and not the word
             elif len(guess) == len(word):
                 if guess in guessed_words:
-                    print("You already guessed that word, Try again")
+                    print("You already guessed that word, Try again.")
                 else:
                     guessed_words.append(guess)
                     print(guess, "is not the word.")
